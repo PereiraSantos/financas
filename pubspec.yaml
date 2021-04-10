@@ -1,0 +1,40 @@
+name: financas
+description: A new Flutter project.
+
+
+publish_to: 'none' 
+
+
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  floor: ^0.18.0
+  flutter_localizations:
+    sdk: flutter 
+  cupertino_icons: ^1.0.0
+  charts_flutter: ^0.9.0
+  fluttertoast: ^7.1.6
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  floor_generator: ^0.18.0
+  build_runner: ^1.10.3
+
+
+
+flutter:
+  
+  uses-material-design: true
+
+
+  #  <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+  #  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+ 
