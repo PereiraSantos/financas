@@ -4,6 +4,7 @@ import 'package:financas/database/database.dart';
 import 'package:financas/models/despesa.dart';
 import 'package:financas/models/financa.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class HomePage extends StatefulWidget {
@@ -56,7 +57,6 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _lendoFinancas();
-    //_lendoDespensas();
   }
 
   @override
@@ -136,14 +136,19 @@ class _HomePageState extends State<HomePage> {
                             ),
                             GestureDetector(
                                 onTap: () {
-                                  _showAlertAlteraFinancaValor();
+                                  if (this.listaFinancas.isNotEmpty) {
+                                    _showAlertAlteraFinancaValor();
+                                  } else {
+                                    _mensagem("Primeiro insira um controle");
+                                  }
                                 },
                                 child: Container(
                                   width: double.infinity,
                                   height: 30,
                                   color: Colors.green,
                                   child: Text(
-                                    "R\$:"+this.valorFinanca.toStringAsFixed(2),
+                                    "R\$:" +
+                                        this.valorFinanca.toStringAsFixed(2),
                                     style: TextStyle(
                                         fontSize: 18,
                                         fontFamily: 'helvetica_neue_light',
@@ -183,14 +188,19 @@ class _HomePageState extends State<HomePage> {
                             ),
                             GestureDetector(
                                 onTap: () {
-                                  _showAlertAlteraFinancaPoupar();
+                                  if (this.listaFinancas.isNotEmpty) {
+                                    _showAlertAlteraFinancaPoupar();
+                                  } else {
+                                    _mensagem("Primeiro insira um controle");
+                                  }
                                 },
                                 child: Container(
                                   width: double.infinity,
                                   height: 30,
                                   color: Colors.green,
                                   child: Text(
-                                    "R\$:"+this.valorPoupar.toStringAsFixed(2),
+                                    "R\$:" +
+                                        this.valorPoupar.toStringAsFixed(2),
                                     style: TextStyle(
                                         fontSize: 18,
                                         fontFamily: 'helvetica_neue_light',
@@ -232,7 +242,8 @@ class _HomePageState extends State<HomePage> {
                               height: 30,
                               color: Colors.blue,
                               child: Text(
-                                "R\$:"+this.valorRendaTotal.toStringAsFixed(2),
+                                "R\$:" +
+                                    this.valorRendaTotal.toStringAsFixed(2),
                                 style: TextStyle(
                                     fontSize: 18,
                                     fontFamily: 'helvetica_neue_light',
@@ -284,7 +295,7 @@ class _HomePageState extends State<HomePage> {
                         height: 40,
                         color: Colors.red,
                         child: Text(
-                          "R\$:"+this.valorDespesa.toStringAsFixed(2),
+                          "R\$:" + this.valorDespesa.toStringAsFixed(2),
                           style: TextStyle(
                               fontSize: 18,
                               fontFamily: 'helvetica_neue_light',
@@ -340,7 +351,7 @@ class _HomePageState extends State<HomePage> {
                                     /*
                                       container *data
                                     */
-                                  
+
                                     Container(
                                       width: double.infinity,
                                       height: 20,
@@ -496,6 +507,7 @@ class _HomePageState extends State<HomePage> {
       if (_indiceAtual == 0) {
         if (this.listaDespesas == null) {
           _showAlertCriaFinanca();
+          _resetaValoresFinanca();
         } else {
           _showAlertCriaFinanca();
           _showAlertAntesCriaFinanca();
@@ -595,6 +607,7 @@ class _HomePageState extends State<HomePage> {
               color: Colors.white,
               child: new TextFormField(
                   maxLines: 1,
+                  keyboardType: TextInputType.number,
                   decoration: new InputDecoration(
                     border: InputBorder.none,
                     filled: false,
@@ -626,6 +639,7 @@ class _HomePageState extends State<HomePage> {
               color: Colors.white,
               child: new TextFormField(
                   maxLines: 1,
+                  keyboardType: TextInputType.number,
                   decoration: new InputDecoration(
                     border: InputBorder.none,
                     filled: false,
@@ -734,8 +748,8 @@ class _HomePageState extends State<HomePage> {
                   borderRadius: new BorderRadius.all(new Radius.circular(5.0))),
               child: new FlatButton(
                 onPressed: () {
-                  _pegarRagistrosFinanca();
                   if (_verificaValorFinanca()) {
+                    _pegarRagistrosFinanca();
                     _persistenciaDadosDao(
                       "salvar",
                       "financa",
@@ -787,7 +801,7 @@ class _HomePageState extends State<HomePage> {
                     width: 200,
                     height: 30,
                     color: Colors.white,
-                    child: Text("Editar controle",
+                    child: Text("Editar renda",
                         style: TextStyle(
                             color: Colors.black54,
                             fontSize: 26.0,
@@ -826,6 +840,7 @@ class _HomePageState extends State<HomePage> {
               color: Colors.white,
               child: new TextFormField(
                   maxLines: 1,
+                  keyboardType: TextInputType.number,
                   decoration: new InputDecoration(
                     border: InputBorder.none,
                     filled: false,
@@ -934,13 +949,16 @@ class _HomePageState extends State<HomePage> {
                   borderRadius: new BorderRadius.all(new Radius.circular(5.0))),
               child: new FlatButton(
                 onPressed: () {
-                  _pegarRagistrosFinanca();
-                  _persistenciaDadosDao(
-                    "alterarValor",
-                    "financa",
-                    0,
-                  );
-                  Navigator.of(context).pop();
+                  if (_verificaValorFinancaRenda()) {
+                    _pegarRagistrosFinanca();
+                    _persistenciaDadosDao(
+                      "alterarValor",
+                      "financa",
+                      0,
+                    );
+
+                    Navigator.of(context).pop();
+                  }
                 },
                 child: Text(
                   'Editar',
@@ -985,7 +1003,7 @@ class _HomePageState extends State<HomePage> {
                     width: 200,
                     height: 30,
                     color: Colors.white,
-                    child: Text("Editar controle",
+                    child: Text("Editar poupar",
                         style: TextStyle(
                             color: Colors.black54,
                             fontSize: 26.0,
@@ -1024,6 +1042,7 @@ class _HomePageState extends State<HomePage> {
               color: Colors.white,
               child: new TextFormField(
                   maxLines: 1,
+                  keyboardType: TextInputType.number,
                   decoration: new InputDecoration(
                     border: InputBorder.none,
                     filled: false,
@@ -1132,13 +1151,16 @@ class _HomePageState extends State<HomePage> {
                   borderRadius: new BorderRadius.all(new Radius.circular(5.0))),
               child: new FlatButton(
                 onPressed: () {
-                  _pegarRagistrosFinanca();
-                  _persistenciaDadosDao(
-                    "alterarPoupar",
-                    "financa",
-                    0,
-                  );
-                  Navigator.of(context).pop();
+                  if (_verificaValorFinancaPoupar()) {
+                    _pegarRagistrosFinanca();
+                    _persistenciaDadosDao(
+                      "alterarPoupar",
+                      "financa",
+                      0,
+                    );
+
+                    Navigator.of(context).pop();
+                  }
                 },
                 child: Text(
                   'Editar',
@@ -1220,6 +1242,7 @@ class _HomePageState extends State<HomePage> {
               color: Colors.white,
               child: new TextFormField(
                   maxLines: 1,
+                  keyboardType: TextInputType.text,
                   decoration: new InputDecoration(
                     border: InputBorder.none,
                     filled: false,
@@ -1326,6 +1349,7 @@ class _HomePageState extends State<HomePage> {
               color: Colors.white,
               child: new TextFormField(
                   maxLines: 1,
+                  keyboardType: TextInputType.number,
                   decoration: new InputDecoration(
                     border: InputBorder.none,
                     filled: false,
@@ -1360,9 +1384,8 @@ class _HomePageState extends State<HomePage> {
                   borderRadius: new BorderRadius.all(new Radius.circular(5.0))),
               child: new FlatButton(
                 onPressed: () {
-                  _pegarRagistrosDespesa();
-
                   if (_verificaValor()) {
+                    _pegarRagistrosDespesa();
                     _persistenciaDadosDao("salvar", "despesa", 0);
                     Navigator.of(context).pop();
                   }
@@ -1449,6 +1472,7 @@ class _HomePageState extends State<HomePage> {
               color: Colors.white,
               child: new TextFormField(
                   maxLines: 1,
+                  keyboardType: TextInputType.text,
                   decoration: new InputDecoration(
                     border: InputBorder.none,
                     filled: false,
@@ -1554,6 +1578,7 @@ class _HomePageState extends State<HomePage> {
               color: Colors.white,
               child: new TextFormField(
                   maxLines: 1,
+                  keyboardType: TextInputType.number,
                   decoration: new InputDecoration(
                     border: InputBorder.none,
                     filled: false,
@@ -1588,14 +1613,16 @@ class _HomePageState extends State<HomePage> {
                   borderRadius: new BorderRadius.all(new Radius.circular(5.0))),
               child: new FlatButton(
                 onPressed: () {
-                  _pegarRagistrosDespesa();
-                  _persistenciaDadosDao(
-                    "altera",
-                    "despesa",
-                    id,
-                  );
+                  if (_verificaValor()) {
+                    _pegarRagistrosDespesa();
+                    _persistenciaDadosDao(
+                      "altera",
+                      "despesa",
+                      id,
+                    );
 
-                  Navigator.of(context).pop();
+                    Navigator.of(context).pop();
+                  }
                 },
                 child: Text(
                   'Editar',
@@ -1842,11 +1869,11 @@ class _HomePageState extends State<HomePage> {
   _pegarRagistrosFinanca() {
     setState(() {
       textControllerValorFinanca.text.isNotEmpty
-          ? this.valorFinanca = double.parse(textControllerValorFinanca.text)
+          ? this.valorFinanca = double.tryParse(textControllerValorFinanca.text)
           : this.valorFinanca = 0;
 
       textControllerValorPoupar.text.isNotEmpty
-          ? this.valorPoupar = double.parse(textControllerValorPoupar.text)
+          ? this.valorPoupar = double.tryParse(textControllerValorPoupar.text)
           : this.valorPoupar = 0;
 
       this.dataFinanca.isNotEmpty
@@ -1863,23 +1890,52 @@ class _HomePageState extends State<HomePage> {
       return false;
     }
 
+    if (textControllerValorFinanca.text.length >= 20) {
+      _mensagem("Campo renda é muito grande");
+      return false;
+    }
+
+    if (double.tryParse(textControllerValorFinanca.text) == null) {
+      _mensagem("Campo finança aceita apenas numeros");
+      return false;
+    }
+    if (textControllerValorPoupar.text.length >= 20) {
+      _mensagem("Campo poupar é muito grande");
+      return false;
+    }
+    if (textControllerValorPoupar.text != "" &&
+        double.tryParse(textControllerValorPoupar.text) == null) {
+      _mensagem("Campo poupar aceita apenas numeros");
+      return false;
+    }
+
     return true;
   }
 
-  _pegarRagistrosDespesa() {
-    setState(() {
-      this.descricaoDespesa = textControllerDescricaoDespesa.text;
+  bool _verificaValorFinancaRenda() {
+    if (double.tryParse(textControllerValorFinanca.text) == null) {
+      _mensagem("Campo renda apenas numeros");
+      return false;
+    }
+    if (textControllerValorFinanca.text.length >= 20) {
+      _mensagem("Campo renda apenas numeros");
+      return false;
+    }
 
-      textControllerValorDespesa.text.isNotEmpty
-          ? this.valorDespesa = double.parse(textControllerValorDespesa.text)
-          : this.valorDespesa = 0;
+    return true;
+  }
 
-      this.dataDespesa.isNotEmpty
-          ? this.dataDespesa = this.dataDespesa
-          : this.dataDespesa = this.data;
-    });
+  bool _verificaValorFinancaPoupar() {
+    if (double.tryParse(textControllerValorPoupar.text) == null) {
+      _mensagem("Campo poupar aceita apenas numeros");
+      return false;
+    }
+    if (textControllerValorPoupar.text.length >= 20) {
+      _mensagem("Campo poupar é muito grande");
+      return false;
+    }
 
-    _lendoDespensas();
+    return true;
   }
 
   bool _verificaValor() {
@@ -1888,11 +1944,41 @@ class _HomePageState extends State<HomePage> {
       return false;
     }
 
+    if (textControllerDescricaoDespesa.text.length >= 100) {
+      _mensagem("Campo descrição é muito grande");
+      return false;
+    }
+
     if (textControllerValorDespesa.text.isEmpty) {
       _mensagem("Campo valor obrigatorio");
       return false;
     }
+
+    if (textControllerValorDespesa.text.length >= 20) {
+      _mensagem("Campo valor é muito grande");
+      return false;
+    }
+    if (double.tryParse(textControllerValorDespesa.text) == null) {
+      _mensagem("Campo valor aceita apenas numeros");
+      return false;
+    }
     return true;
+  }
+
+  _pegarRagistrosDespesa() {
+    setState(() {
+      this.descricaoDespesa = capitalize(textControllerDescricaoDespesa.text);
+
+      textControllerValorDespesa.text.isNotEmpty
+          ? this.valorDespesa = double.tryParse(textControllerValorDespesa.text)
+          : this.valorDespesa = 0;
+
+      this.dataDespesa.isNotEmpty
+          ? this.dataDespesa = this.dataDespesa
+          : this.dataDespesa = this.data;
+    });
+
+    _lendoDespensas();
   }
 
   _persistenciaDadosDao(String chave, base, int id) async {
@@ -1909,7 +1995,6 @@ class _HomePageState extends State<HomePage> {
       _removendoDespesa(database, id);
     }
     if (chave == "salvar" && base == "financa") {
-      //_alteraFinancaDataFinal(database);
       _salvarFinancas(database);
     }
     if (chave == "alterarValor" && base == "financa") {
@@ -1934,8 +2019,8 @@ class _HomePageState extends State<HomePage> {
 
   _salvarFinancas(AppDatabase database) async {
     final financaDao = database.financaDao;
-    Financa financa = new Financa(null, this.valorFinanca, this.dataFinanca,
-        this.data, this.valorPoupar);
+    Financa financa = new Financa(
+        null, this.valorFinanca, this.dataFinanca, this.data, this.valorPoupar);
     await financaDao.insertFinanca(financa);
   }
 
@@ -2076,5 +2161,12 @@ class _HomePageState extends State<HomePage> {
       textControllerDataFinanca.text = this.dataInicial;
       this.dataFinanca = this.dataInicial;
     });
+  }
+
+  String capitalize(String string) {
+    if (string.isEmpty) {
+      return string;
+    }
+    return string[0].toUpperCase() + string.substring(1);
   }
 }

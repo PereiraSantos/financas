@@ -716,7 +716,6 @@ class _RelatorioState extends State<Relatorio> {
   }
 
   void _showAlertDespesas(double chave) {
-
     double valorAlertaTemp = chave * 85;
     double valorContainerTemp = valorAlertaTemp + 70;
 

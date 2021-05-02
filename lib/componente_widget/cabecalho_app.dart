@@ -54,7 +54,6 @@ class ContainerMes extends StatelessWidget {
               fontSize: 17,
               fontFamily: 'helvetica_neue_light',
               color: Colors.black54)),
-      
     );
   }
 }
@@ -77,7 +76,6 @@ class ContainerDataInicial extends StatelessWidget {
               fontSize: 17,
               fontFamily: 'helvetica_neue_light',
               color: Colors.black54)),
-      
     );
   }
 }
